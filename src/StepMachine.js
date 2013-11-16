@@ -1,5 +1,3 @@
-
-
 var StepMachine = function () {
     this.steps = {};
     this._isTransitioning = false;
@@ -17,26 +15,25 @@ StepMachine.prototype = {
     },
 
     _move: function _move (fromStep, toStep) {
-
-        if (!this.steps.hasOwnProperty(fromStep)) throw new Error('Invalid transition: FromStep "{0}" is not defined.');
-        if (!this.steps.hasOwnProperty(toStep)) throw new Error('Invalid transition: ToStep "{0}" is not defined.');
-
-        fromStep = this[fromStep];
-        toStep = this[toStep];
-
         var self = this;
 
-        this.isTransitioning(true);
+        if (!self.steps.hasOwnProperty(fromStep)) throw new Error('Invalid transition: FromStep "{0}" is not defined.');
+        if (!self.steps.hasOwnProperty(toStep)) throw new Error('Invalid transition: ToStep "{0}" is not defined.');
+
+        fromStep = self[fromStep];
+        toStep = self[toStep];
+
+        self.isTransitioning(true);
 
         $.when(fromStep._validate)
             .then(fromStep._exit)
             .then(toStep._enter)
             .done(function () {
                 fromStep.isActive(false);
-                this.publish('step.exited', fromStep);
-                this.publish('step.entered', toStep);
+                self.publish('step.exited', fromStep);
+                self.publish('step.entered', toStep);
             }).fail(function (failure) {
-                this.publish('step.failedtransition', {from: fromStep, to: toStep, failure: failure});
+                self.publish('step.failedtransition', {from: fromStep, to: toStep, failure: failure});
             }).always(function () {
                 self.isTransitioning(false);
             });

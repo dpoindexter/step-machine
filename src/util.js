@@ -8,10 +8,6 @@ function toType (obj) {
     return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase()
 }
 
-function isArray (test) {
-    return toType(test) === 'array';
-}
-
 function toArray (obj, from) {
     return ([]).slice.call(obj, +from || 0);
 }
@@ -27,4 +23,18 @@ function getOrSetFlag (flag, val) {
     if (!this.hasOwnProperty(flag)) return !!val;
     isSomething(val) && this[flag] = !!val;
     return this[flag];
+}
+
+function identityFn (val) {
+    return function () {
+        return val;
+    }
+}
+
+function isArray (test) {
+    return toType(test) === 'array';
+}
+
+function isString (test) {
+    return toType(test) === 'string';
 }

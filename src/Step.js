@@ -21,7 +21,7 @@ Step.prototype = (function () {
     function _initialize () {
         var self = this;
 
-        this.model = createInstance(this._ctor, this._ctor._initializeWith);
+        this.model = utils.createInstance(this._ctor, this._ctor._initializeWith);
         var onInit = this._runQueue('_initializeQueue');
 
         onInit.then(function () {
@@ -78,9 +78,9 @@ Step.prototype = (function () {
             return this;
         },
 
-        constructor: function constructor (ctor) {
+        modelConstructor: function modelConstructor (ctor) {
             this._ctor = ctor;
-            var initArgs = uship.utils.toArray(arguments, 1);
+            var initArgs = utils.toArray(arguments, 1);
             if (initArgs.length) this._ctor._initializeWith = initArgs;
             return this;
         },
@@ -112,7 +112,8 @@ Step.prototype = (function () {
         on: function on (eventNameOrHash, fn) {
             var eventsHash = {};
 
-            if (typeof eventNameOrHash === 'string') {
+            if (utils.isString(eventNameOrHash)) {
+                fn = (utils.isString(fn)) ? utils.identityFn(fn) : fn;
                 eventsHash[eventNameOrHash] = fn;
             } else {
                 eventsHash = eventNameOrHash;
